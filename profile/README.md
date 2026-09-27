@@ -1,117 +1,52 @@
-# 🛡️ SolSentry
+# SolSentry
 
-> **The autonomous threat-intelligence layer for Solana.**
-> *RugCheck tells you a fire is burning. SolSentry tells you who lit it.*
+> Threat intelligence for Solana, focused on the people behind the tokens.
+>
+> *RugCheck shows you a fire. SolSentry shows you who lit it.*
 
-We map the **operators** behind Solana scams — the wallets that deploy serial rugs — and turn that graph into pre-trade signals for wallets, bots, and AI agents.
+We map the operators behind Solana scams: the wallets that deploy rug after rug.
+That operator graph becomes a pre-trade signal for wallets, bots and AI agents.
 
-🔴 **Live**: [solsentry.app](https://solsentry.app) · [api.solsentry.app/v1/stats](https://api.solsentry.app/v1/stats) · **28+ days** continuous on Hetzner VPS
-📊 **Current snapshot**: **88.1% accuracy** · **51K+ scans** · **5,512 operators tracked** · **1,279 serial deployers** · **18,987 confirmed rugs** · zero confirmed false positives at CRITICAL
+Live at [solsentry.app](https://solsentry.app). The API is at
+[api.solsentry.app](https://api.solsentry.app/v1/stats).
 
----
+We don't hard-code numbers in this README. CRITICAL precision and resolved predictions are
+whatever [`/v1/stats`](https://api.solsentry.app/v1/stats) returns
+right now. Each prediction can be checked one mint at a time at `/v1/predictions/{mint}`.
 
-## The case we keep telling
+## What it does
 
-`4kxscute` — known wallet, **2,532 tokens deployed, 2,352 confirmed rugs (92.9% rug rate)**. Zero indexed mentions on Twitter, Reddit, Solscan labels, RugCheck, or Nansen until SolSentry tagged the operator. We made hundreds of predictions on this wallet, with average lead time of **~19 minutes** between deploy and CRITICAL alert.
+Most tools score a token: is this contract dangerous right now. SolSentry scores the
+operator. That means the wallet that deployed the token, what it deployed before, and the
+cluster it belongs to. A bytecode audit can't answer that question.
 
-Queryable now:
+Query it live, no key needed:
+
 ```bash
-curl https://api.solsentry.app/v1/operator/4kxscuteRLQdNiTXA33YYsvywAPNA6DQTifswxjL5pH1
+curl https://api.solsentry.app/v1/operator/<wallet>
+curl https://api.solsentry.app/v1/token/<mint>
+curl https://api.solsentry.app/v1/predictions/<mint>
 ```
 
-That's the product.
-
----
-
-## What just shipped (Frontier 2026, last 7 days)
-
-| Integration | Status | What it does |
-|---|---|---|
-| **Dune Sim SVM API** | Production | 4 forensics modules consume real-time tx data (1,824 LOC of consumers) |
-| **Covalent / GoldRush** | Deployed VPS | Wallet portfolio enrichment + spam cross-validation (cross-chain ready) |
-| **Zerion CLI** | Deployed VPS | Autonomous-agent enrichment — multi-chain portfolio + PnL via shell command |
-| **RPC Fast** | Deployed VPS | Tier-0 round-robin peer in our 11-endpoint RPC pool |
-| **Cloak shielded transfers** | Scaffold + rapport | "Privacy without impunity" — operator-screen before private transfer |
-| **Umbra privacy rail** | Scaffold | Second privacy rail, same operator-screen substrate (rail-agnostic) |
-| **x402 payment enforcement** | Production | Mainnet-ready paid endpoints + Cloak/Zerion pay-per-call |
-| **Self-heal pipeline** | Production | 2,400+ auto-repair attempts on missing dev_wallet / token symbol |
-
----
-
-## Public repositories
+## Open repos
 
 | Repo | What it is |
-|------|------------|
-| [**solsentry-app**](https://github.com/solsentry/solsentry-app) | Next.js 15 web app — landing, live operator lookup, x402 dashboard |
-| [**solsentry-mcp**](https://github.com/solsentry/solsentry-mcp) | Zero-install MCP server — 11 tools for AI agents (`@solsentry/mcp` on NPM) |
-| [**solsentry-docs**](https://github.com/solsentry/solsentry-docs) | Technical documentation, integration guides, threat model, roadmap |
-| [**solsentry-nansen-cli**](https://github.com/solsentry/solsentry-nansen-cli) | CLI tool from the Drift Protocol $285M hack investigation |
-| [**thegarage**](https://github.com/solsentry/thegarage) | PFP/banner duotone generator for Superteam Brasil's THE/GARAGE cohort |
+|---|---|
+| [solsentry-app](https://github.com/solsentry/solsentry-app) | The web app: landing page, operator and token lookup, live dashboards |
+| [solsentry-docs](https://github.com/solsentry/solsentry-docs) | Methodology, install guides, API reference |
+| [solsentry-mcp](https://github.com/solsentry/solsentry-mcp) | Zero-install MCP server that gives any AI agent SolSentry lookups ([`@solsentry/mcp`](https://www.npmjs.com/package/@solsentry/mcp) on npm) |
+| [solsentry-guard](https://github.com/solsentry/solsentry-guard) | Risk checks before you sign a Solana transaction |
+| [solana-counterparty-gate](https://github.com/solsentry/solana-counterparty-gate) | Operator-level counterparty risk, packaged as a coding-agent skill |
 
-The core product code (`solsentry/solsentry`) lives in a private repository. Hackathon judges and review partners get access on request — contact `hello@solsentry.app`.
+The core intelligence engine is private. The repos above are the parts you can install
+and build on.
 
----
+## Contact
 
-## Roadmap (short horizon, Q2–Q3 2026)
+Web: [solsentry.app](https://solsentry.app) ·
+X: [@solsentryai](https://x.com/solsentryai) ·
+Telegram: [t.me/solsentryai](https://t.me/solsentryai) ·
+Email: hello@solsentry.app
 
-**Now → Frontier deadline (May 12, 2026):**
-- ✅ Multi-source data layer (Helius + Dune Sim + Covalent + Zerion)
-- ✅ Two privacy rails wired (Cloak + Umbra)
-- ✅ 11-endpoint RPC pool with health-aware load balancing
-- ✅ x402 mainnet enforcement scaffold
-
-**Post-Frontier (May–July 2026):**
-- Public dashboard refactor → solsentry.app/v2 with operator graph visualization
-- `@solsentry/jupiter-shield` SDK — operator-aware routing for Jupiter Strict Mode v2
-- `@solsentry/privacy-shield` SDK — rail-agnostic operator-screen middleware
-- Cross-chain investigation walker (Solana → EVM via Covalent + Zerion)
-- Pricing tier launch on x402 (`$0.001–$0.01` per `/v1/operator/{wallet}` micropayment)
-
-**Q3 2026:**
-- Multi-tenant API + customer-specific scoring deltas
-- Phantom / Backpack wallet integration
-- 1-2 trading bot integrations (Trojan, BONKbot)
-- Audit (target: Adevar Labs, OtterSec, or Neodyme)
-
----
-
-## Where SolSentry fits in the Solana security stack
-
-| Layer | What it covers | Example tools |
-|---|---|---|
-| Token classification | Single mint at a time | RugCheck, GoPlus |
-| Wallet classification | Single wallet at a time | Webacy, Chainabuse |
-| **Operator intelligence** | **The human/wallet cluster behind N tokens, over time** | **SolSentry** |
-| Compliance | KYC, sanctions, AML | Chainalysis, TRM |
-
-The operator-intelligence layer was missing. SolSentry sits below RugCheck/Webacy in the data flow — they classify the artifacts, we classify the deployers. Cross-attack memory is what makes the difference.
-
----
-
-## Market opportunity (honest seed-scale projections)
-
-**TAM** — every Solana wallet interaction needing operator-risk pre-check:
-- $125M ARR consumer end (25M wallet MAUs × $5/user/year analog)
-- $30M–$150M ARR B2B end ($600B annualized DEX volume × 1–5 bps fraud-tool benchmark)
-
-**SAM** — Solana-native integrations reachable in 18 months:
-- 3 major wallets + top 5 trading bots + 2 aggregators
-- $600K–$6M ARR at $0.001–$0.01 per operator check, 50M checks/month
-
-**SOM** — 12-month capture at 10–25%:
-- Conservative: $600K ARR · Target: $1.5M ARR · Stretch: $3M ARR
-
-These are floor numbers, not the moonshot. Consistent with Helius's early traction trajectory.
-
----
-
-## Where to find us
-
-🌐 **Web**: [solsentry.app](https://solsentry.app)
-🐦 **X / Twitter**: [@solsentryapp](https://x.com/solsentryapp)
-✈️ **Telegram**: [t.me/solsentryai](https://t.me/solsentryai)
-📦 **NPM**: [`@solsentry/mcp`](https://www.npmjs.com/package/@solsentry/mcp)
-📧 **Email**: hello@solsentry.app
-🇧🇷 **Built by** Crash Diniz, solo founder, Ribeirão Preto / São Paulo, Brazil
-
-**Hackathon**: Colosseum Frontier 2026 · [Arena profile](https://arena.colosseum.org/projects/explore/solsentry-3)
+Built in Brazil by Crash Diniz. We rank operators for human review and don't publish
+accusations.
